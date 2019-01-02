@@ -136,7 +136,9 @@ int main(void)
 //    HAL_Delay(1000);
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 //    HAL_Delay(1000);
-    printf("Test");
+//    printf("Test");
+    char* c = "test";
+    HAL_UART_Transmit(&huart1, c, 4, 0xFFFF);
     HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
   }
