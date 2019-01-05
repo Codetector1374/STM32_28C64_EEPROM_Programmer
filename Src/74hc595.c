@@ -18,12 +18,17 @@ sr595* sr595_create(GPIO_TypeDef *dataGPIO, uint16_t dataPin,
 
         sr->dataGPIO = dataGPIO;
         sr->dataPin = dataPin;
+        HAL_GPIO_WritePin(sr->dataGPIO, sr->dataPin, GPIO_PIN_RESET);
 
         sr->latchGPIO = latchGPIO;
         sr->latchPin = latchPin;
+        HAL_GPIO_WritePin(sr->latchGPIO, sr->latchPin, GPIO_PIN_RESET);
+
 
         sr->clockGPIO = clockGPIO;
         sr->clockPin = clockPin;
+        HAL_GPIO_WritePin(sr->clockGPIO, sr->clockPin, GPIO_PIN_RESET);
+
 
         sr->chipData = calloc(sizeof(uint16_t), registerCount);
         if (sr->chipData == NULL) {
@@ -40,7 +45,9 @@ void shiftOut(sr595* sr) {
 }
 
 void latch(sr595* sr) {
-
+    HAL_GPIO_WritePin(sr->latchGPIO, sr->latchPin, GPIO_PIN_SET);
+    DWT_Delay_us(5);
+    HAL_GPIO_WritePin(sr->latchGPIO, sr->latchPin, GPIO_PIN_RESET);
 }
 
 uint8_t sr595_get_bit(sr595 *sr, uint16_t bit) {
