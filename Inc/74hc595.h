@@ -33,7 +33,7 @@ void sr595_mod_bit(sr595 *sr, uint16_t bit, uint8_t data);
 uint8_t sr595_chip_data_get(sr595 *sr, uint8_t chipId);
 void sr595_chip_data_set(sr595 *sr, uint8_t chipId, uint8_t chipData);
 
-void shiftOut(sr595* sr);
-void latch(sr595* sr);
+void sr595_shiftOut(sr595* sr);
+void sr595_latch(sr595* sr);
 
 #endif //INC_28C64PROGRAMMER_74HC595_H

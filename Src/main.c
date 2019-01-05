@@ -58,6 +58,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "dwt_stm32_delay.h"
+#include "rom28c64.h"
+#include "74hc595.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -125,10 +127,17 @@ int main(void)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   DWT_Delay_Init();
+
+  sr595* outReg = sr595_create(GPIOB, GPIO_PIN_12,
+          GPIOB, GPIO_PIN_13, GPIOB, GPIO_PIN_14,
+          3);
+
+  rom28c64* rom = rom28c64_create(GPIOB, GPIO_PIN_15, outReg);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint16_t cntr = 0;
   while (1)
   {
     /* USER CODE END WHILE */
@@ -137,10 +146,14 @@ int main(void)
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 //    HAL_Delay(1000);
 //    printf("Test");
-    char* c = "test";
-    HAL_UART_Transmit(&huart1, c, 4, 0xFFFF);
-    HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
+    if (cntr > 0b0001111111111111) {
+        cntr = 0;
+    }
+
+    rom28c64_write_address(rom, cntr, 0b10110010);
+    HAL_Delay(1);
+    cntr++;
   }
   /* USER CODE END 3 */
 }

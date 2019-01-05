@@ -40,7 +40,7 @@ sr595* sr595_create(GPIO_TypeDef *dataGPIO, uint16_t dataPin,
     return NULL;
 }
 
-void shiftOut(sr595* sr) {
+void sr595_shiftOut(sr595* sr) {
     for (int i = sr->registerCount - 1; i >= 0; i--) {
         for (int j = 7; j >=0 ; j--) {
             if (sr->chipData[i] >> j & 0b1) {
@@ -56,7 +56,7 @@ void shiftOut(sr595* sr) {
     }
 }
 
-void latch(sr595* sr) {
+void sr595_latch(sr595* sr) {
     HAL_GPIO_WritePin(sr->latchGPIO, sr->latchPin, GPIO_PIN_SET);
     DWT_Delay_us(5);
     HAL_GPIO_WritePin(sr->latchGPIO, sr->latchPin, GPIO_PIN_RESET);
