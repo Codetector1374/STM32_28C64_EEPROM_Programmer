@@ -50,6 +50,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "usb_device.h"
@@ -91,7 +92,11 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+//#define DMA_RX_BUFFER_SIZE 64
+//uint8_t DMA_RX_Buffer[DMA_RX_BUFFER_SIZE];
+//
+//#define UART_BUFFER_SIZE 256
+//uint8_t UART_Buffer[UART_BUFFER_SIZE];
 /* USER CODE END 0 */
 
 /**
@@ -122,11 +127,15 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_TIM1_Init();
   MX_USART1_UART_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   DWT_Delay_Init();
+
+  usart_send_string("Starting...");
+//  HAL_UART_Receive_DMA(&huart1, DMA_RX_Buffer, DMA_RX_BUFFER_SIZE);
 
   sr595* outReg = sr595_create(GPIOB, GPIO_PIN_12,
           GPIOB, GPIO_PIN_13, GPIOB, GPIO_PIN_14,
@@ -141,11 +150,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-//    HAL_Delay(1000);
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-//    HAL_Delay(1000);
-//    printf("Test");
+
     /* USER CODE BEGIN 3 */
     if (cntr > 0b0001111111111111) {
         cntr = 0;

@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : USART.h
-  * Description        : This file provides code for the configuration
-  *                      of the USART instances.
+  * File Name          : dma.h
+  * Description        : This file contains all the function prototypes for
+  *                      the dma.c file
   ******************************************************************************
   * This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
@@ -47,8 +47,9 @@
   ******************************************************************************
   */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __usart_H
-#define __usart_H
+#ifndef __dma_H
+#define __dma_H
+
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -56,32 +57,27 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
+/* DMA memory to memory transfer handles -------------------------------------*/
+
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
 
-extern UART_HandleTypeDef huart1;
-
 /* USER CODE BEGIN Private defines */
-extern DMA_HandleTypeDef hdma_usart1_rx;
+
 /* USER CODE END Private defines */
 
-void MX_USART1_UART_Init(void);
+void MX_DMA_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void usart_rx_check();
-void usart_send_string(const char* str);
-void usart_send_data(uint8_t* data, size_t len);
+
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
-#endif /*__ usart_H */
 
-/**
-  * @}
-  */
+#endif /* __dma_H */
 
 /**
   * @}

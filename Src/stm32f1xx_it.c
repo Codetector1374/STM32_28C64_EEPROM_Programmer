@@ -38,6 +38,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "usart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -72,6 +73,8 @@
 
 /* External variables --------------------------------------------------------*/
 extern PCD_HandleTypeDef hpcd_USB_FS;
+extern DMA_HandleTypeDef hdma_usart1_rx;
+extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -213,6 +216,30 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles DMA1 channel5 global interrupt.
+  */
+void DMA1_Channel5_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel5_IRQn 0 */
+  if (__HAL_DMA_GET_IT_SOURCE(&hdma_usart1_rx, DMA_IT_HT) && __HAL_DMA_GET_FLAG(&hdma_usart1_rx, DMA_FLAG_HT5)) {
+    __HAL_DMA_CLEAR_FLAG(&hdma_usart1_rx, DMA_FLAG_HT5);
+    usart_rx_check();
+    return;
+  }
+
+  if (__HAL_DMA_GET_IT_SOURCE(&hdma_usart1_rx, DMA_IT_TC) && __HAL_DMA_GET_FLAG(&hdma_usart1_rx, DMA_FLAG_TC5)) {
+    __HAL_DMA_CLEAR_FLAG(&hdma_usart1_rx, DMA_FLAG_TC5);
+    usart_rx_check();
+    return;
+  }
+  /* USER CODE END DMA1_Channel5_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart1_rx);
+  /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel5_IRQn 1 */
+}
+
+/**
   * @brief This function handles USB low priority or CAN RX0 interrupts.
   */
 void USB_LP_CAN1_RX0_IRQHandler(void)
@@ -224,6 +251,24 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 1 */
 
   /* USER CODE END USB_LP_CAN1_RX0_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART1 global interrupt.
+  */
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART1_IRQn 0 */
+  if (__HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_IDLE) && __HAL_UART_GET_FLAG(&huart1, UART_IT_IDLE)) {
+    __HAL_UART_CLEAR_FLAG(&huart1, UART_IT_IDLE);
+    usart_rx_check();
+    return;
+  }
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+
+  /* USER CODE END USART1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

@@ -14,7 +14,7 @@ set(OBJDUMP arm-none-eabi-objdump)
 set(SIZE arm-none-eabi-size)
 
 
-SET(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F103C8Tx_FLASH.ld Inc/rom28c64.h Src/rom28c64.c)
+SET(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F103C8Tx_FLASH.ld)
 
 #Uncomment for hardware floating point
 #SET(FPU_FLAGS "-mfloat-abi=hard -mfpu=fpv4-sp-d16")
