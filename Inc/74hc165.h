@@ -21,7 +21,7 @@ typedef struct sr165 {
 sr165* sr165_create(GPIO_TypeDef* ldGPIO, uint16_t ldPin,
         GPIO_TypeDef* clkGPIO, uint16_t clkPin,
         GPIO_TypeDef* dataGPIO, uint16_t dataPin);
-void registerLoad(sr165* sr);
-uint8_t read_one_byte(sr165* sr);
+void sr165_load(sr165* sr);
+uint8_t sr165_read_one_byte(sr165* sr);
 
 #endif //INC_28C64PROGRAMMER_74HC165_H

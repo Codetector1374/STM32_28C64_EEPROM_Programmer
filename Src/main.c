@@ -150,24 +150,27 @@ int main(void)
           GPIOB, GPIO_PIN_13, GPIOB, GPIO_PIN_14,
           3);
 
-  rom28c64* rom = rom28c64_create(GPIOB, GPIO_PIN_15, outReg);
+  sr165* inReg = sr165_create(GPIOB, GPIO_PIN_10, GPIOB, GPIO_PIN_11, GPIOB, GPIO_PIN_9);
+
+  rom28c64* rom = rom28c64_create(GPIOB, GPIO_PIN_15, outReg, inReg);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   uint16_t cntr = 0;
+  char* printStream = "0x00000000 0x0000 ";
   while (1)
   {
     /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-    if (cntr > 0b0001111111111111) {
-        cntr = 0;
+    if (cntr > 0xF) {
+      cntr = 0;
     }
-
-    rom28c64_write_address(rom, cntr, 0b10110010);
-    HAL_Delay(1);
+    uint8_t data = rom28c64_read_address(rom, cntr);
+    sprintf(printStream, "0x%08x 0x%04x", cntr, data);
+    usart_send_string(printStream);
     cntr++;
+    HAL_Delay(1000);
+    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
@@ -182,7 +185,7 @@ void SystemClock_Config(void)
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
-  /**Initializes the CPU, AHB and APB busses clocks 
+  /**Initializes the CPU, AHB and APB busses clocks
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
@@ -195,7 +198,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /**Initializes the CPU, AHB and APB busses clocks 
+  /**Initializes the CPU, AHB and APB busses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -241,7 +244,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
