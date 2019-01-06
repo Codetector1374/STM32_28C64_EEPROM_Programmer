@@ -134,15 +134,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
   DWT_Delay_Init();
 
-  __HAL_UART_DISABLE(&huart1);
-
-  __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
-  SET_BIT(huart1.Instance->CR3, USART_CR3_DMAR);
-
   if(HAL_DMA_Start(&hdma_usart1_rx, (uint32_t)&huart1.Instance->DR, (uint32_t) DMA_RX_Buffer, 64) != HAL_OK) {
     usart_send_string("error");
   }
-  __HAL_UART_ENABLE(&huart1);
 
   usart_send_string("Starting...");
 

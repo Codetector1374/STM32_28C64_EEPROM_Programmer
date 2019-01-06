@@ -131,6 +131,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle) {
     __HAL_DMA_ENABLE_IT(&hdma_usart1_rx, DMA_IT_TC);
 
 
+    __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
+    SET_BIT(huart1.Instance->CR3, USART_CR3_DMAR);
+
     /* Enable UART and DMA */
 //    SET_BIT(huart1.Instance->CR1, USART_CR1_UE);
     /* USER CODE END USART1_MspInit 1 */

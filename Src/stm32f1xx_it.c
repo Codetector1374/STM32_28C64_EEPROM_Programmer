@@ -259,10 +259,8 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-  uint32_t a = (huart1.Instance->CR1 >> 4 & 0b1U );
-  uint32_t b = (huart1.Instance->SR >> 4 & 0b1U);
-  if (a && b) {
-    __HAL_UART_CLEAR_FLAG(&huart1, UART_IT_IDLE);
+  if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_IDLE)) {
+    __HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_IDLE);
     usart_rx_check();
     return;
   }
