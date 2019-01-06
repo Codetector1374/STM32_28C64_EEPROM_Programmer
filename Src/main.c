@@ -93,7 +93,7 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 //#define DMA_RX_BUFFER_SIZE 64
-//uint8_t DMA_RX_Buffer[DMA_RX_BUFFER_SIZE];
+extern uint8_t DMA_RX_Buffer[64];
 //
 //#define UART_BUFFER_SIZE 256
 //uint8_t UART_Buffer[UART_BUFFER_SIZE];
@@ -134,8 +134,17 @@ int main(void)
   /* USER CODE BEGIN 2 */
   DWT_Delay_Init();
 
+  __HAL_UART_DISABLE(&huart1);
+
+  __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
+  SET_BIT(huart1.Instance->CR3, USART_CR3_DMAR);
+
+  if(HAL_DMA_Start(&hdma_usart1_rx, (uint32_t)&huart1.Instance->DR, (uint32_t) DMA_RX_Buffer, 64) != HAL_OK) {
+    usart_send_string("error");
+  }
+  __HAL_UART_ENABLE(&huart1);
+
   usart_send_string("Starting...");
-//  HAL_UART_Receive_DMA(&huart1, DMA_RX_Buffer, DMA_RX_BUFFER_SIZE);
 
   sr595* outReg = sr595_create(GPIOB, GPIO_PIN_12,
           GPIOB, GPIO_PIN_13, GPIOB, GPIO_PIN_14,

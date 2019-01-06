@@ -52,7 +52,7 @@
 #include <string.h>
 
 /* USER CODE BEGIN 0 */
-static uint8_t DMA_RX_Buffer[64];
+uint8_t DMA_RX_Buffer[64];
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
@@ -83,6 +83,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle) {
     /* USER CODE BEGIN USART1_MspInit 0 */
 //    hdma_usart1_rx.Init.PeriphInc = DMA_PINC_DISABLE;
 //    hdma_usart1_rx.Init.MemInc = DMA_MINC_ENABLE;
+//    hdma_usart1_rx.Instance -> CPAR = (uint32_t) huart1.Instance.DR;
+//    hdma_usart1_rx.Instance->CMAR = (uint32_t)DMA_RX_Buffer;
     /* USER CODE END USART1_MspInit 0 */
     /* USART1 clock enable */
     __HAL_RCC_USART1_CLK_ENABLE();
@@ -124,14 +126,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle) {
     HAL_NVIC_SetPriority(USART1_IRQn, 0, 1);
     HAL_NVIC_EnableIRQ(USART1_IRQn);
     /* USER CODE BEGIN USART1_MspInit 1 */
-    SET_BIT(huart1.Instance->CR3, USART_CR3_DMAR); // Enable UART DMA Rx
-    __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
+
     __HAL_DMA_ENABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
     __HAL_DMA_ENABLE_IT(&hdma_usart1_rx, DMA_IT_TC);
 
+
     /* Enable UART and DMA */
-    HAL_DMA_Start(&hdma_usart1_rx, (uint32_t)huart1.Instance->DR, (uint32_t) DMA_RX_Buffer, sizeof(DMA_RX_Buffer));
-    SET_BIT(huart1.Instance->CR1, USART_CR1_UE);
+//    SET_BIT(huart1.Instance->CR1, USART_CR1_UE);
     /* USER CODE END USART1_MspInit 1 */
   }
 }
@@ -168,7 +169,7 @@ void usart_rx_check(void) {
   size_t pos;
 
   /* Calculate current position in buffer */
-  pos = sizeof(DMA_RX_Buffer) - __HAL_DMA_GET_COUNTER(&hdma_usart1_rx);
+  pos = sizeof(DMA_RX_Buffer) - hdma_usart1_rx.Instance->CNDTR;
   if (pos != old_pos) {                       /* Check change in received data */
     if (pos > old_pos) {                    /* Current position is over previous one */
       /* We are in "linear" mode */
