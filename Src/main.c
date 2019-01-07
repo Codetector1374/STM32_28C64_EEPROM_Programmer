@@ -152,22 +152,24 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   uint16_t cntr = 0;
-  char* printStream = "0x00000000 0x0000 ";
+  char* printStream = calloc(sizeof(char), 32);
   while (1)
   {
     /* USER CODE END WHILE */
-    if (cntr > 0xF) {
+    if (cntr > 0b0001111111111111U) {
       cntr = 0;
     }
+//    rom28c64_write_address(rom, cntr, 0b10101010U);
     uint8_t data = rom28c64_read_address(rom, cntr);
-    sprintf(printStream, "0x%08x 0x%04x", cntr, data);
+    sprintf(printStream, "0x%04X 0x%02X\r\n", cntr, data);
     usart_send_string(printStream);
     cntr++;
-    HAL_Delay(1000);
+//    HAL_Delay(2);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
+
 
 /**
   * @brief System Clock Configuration
