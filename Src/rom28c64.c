@@ -3,6 +3,7 @@
 //
 #include "rom28c64.h"
 #include <stdlib.h>
+#include "dwt_stm32_delay.h"
 
 void rom28c64_write_chip_state(rom28c64 *rom, uint8_t ce, uint8_t oe,
                                uint8_t we, uint16_t addr, uint8_t data, uint8_t outEn);
@@ -25,9 +26,13 @@ rom28c64 *rom28c64_create(GPIO_TypeDef *ioCtrlGPIO, uint16_t ioCtrlPin, sr595 *o
 
 void rom28c64_write_address(rom28c64 *rom, uint16_t address, uint8_t data) {
     address &= 0b0001111111111111;
-    rom28c64_write_chip_state(rom, 0, 1, 1, address, data, 1); // Write Data to IO
-    rom28c64_write_chip_state(rom, 0, 1, 0, address, data, 1); // Pull Write
-    rom28c64_write_chip_state(rom, 0, 1, 1, address, data, 0); // Reset Write, data off
+    rom28c64_write_chip_state(rom, 0, 1, 1, address, data, 0); // Write address.
+    rom28c64_write_chip_state(rom, 0, 1, 0, address, data, 0); // Pull WE
+    DWT_Delay_us(1);
+    rom28c64_write_chip_state(rom, 0, 1, 0, address, data, 1); // Set Data
+    DWT_Delay_us(5);
+    rom28c64_write_chip_state(rom, 0, 1, 1, address, data, 1); // Reset Write
+    rom28c64_write_chip_state(rom, 0, 1, 1, address, data, 0); // data off
 }
 
 void rom28c64_write_chip_state(rom28c64 *rom, uint8_t ce, uint8_t oe,

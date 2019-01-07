@@ -48,9 +48,9 @@ void sr595_shiftOut(sr595* sr) {
             } else {
                 HAL_GPIO_WritePin(sr->dataGPIO, sr->dataPin, GPIO_PIN_RESET);
             }
-            DWT_Delay_us(2);
+            DWT_Delay_us(1);
             HAL_GPIO_WritePin(sr->clockGPIO, sr->clockPin, GPIO_PIN_SET);
-            DWT_Delay_us(5);
+            DWT_Delay_us(1);
             HAL_GPIO_WritePin(sr->clockGPIO, sr->clockPin, GPIO_PIN_RESET);
         }
     }

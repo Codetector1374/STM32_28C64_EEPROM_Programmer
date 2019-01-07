@@ -158,13 +158,14 @@ int main(void)
     /* USER CODE END WHILE */
     if (cntr > 0b0001111111111111U) {
       cntr = 0;
+      HAL_Delay(10000);
     }
-//    rom28c64_write_address(rom, cntr, 0b10101010U);
+//    rom28c64_write_address(rom, cntr, (uint8_t) cntr);
+//    HAL_Delay(10);
     uint8_t data = rom28c64_read_address(rom, cntr);
     sprintf(printStream, "0x%04X 0x%02X\r\n", cntr, data);
     usart_send_string(printStream);
     cntr++;
-//    HAL_Delay(2);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
