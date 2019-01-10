@@ -31,7 +31,7 @@ typedef struct command_queue {
     uint8_t buffer_head;
     uint8_t buffer_tail;
 
-    pgmr_command* command_queue;
+    pgmr_command* cmd_queue;
     uint8_t command_queue_size;
     uint8_t command_queue_head;
     uint8_t command_queue_tail;
@@ -41,7 +41,7 @@ command_queue* command_queue_create_v();
 
 command_queue* command_queue_create_ii(uint8_t buffer_size, uint8_t queue_size);
 
-void process_data(char* data, uint8_t len);
+void process_data(command_queue* q, char* data, uint8_t len);
 
 uint8_t command_avail(command_queue* q);
 pgmr_command* command_queue_peek(command_queue* q);
