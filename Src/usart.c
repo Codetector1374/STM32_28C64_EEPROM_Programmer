@@ -50,14 +50,21 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
 #include <string.h>
+#include <command_queue.h>
+#include <cmsis_armcc_V6.h>
 
 /* USER CODE BEGIN 0 */
 uint8_t DMA_RX_Buffer[64];
-/* USER CODE END 0 */
+
 
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
 
+extern command_queue* main_command_queue;
+
+void process_uart_data(uint8_t* data, size_t len);
+
+/* USER CODE END 0 */
 /* USART1 init function */
 
 void MX_USART1_UART_Init(void) {
@@ -177,13 +184,13 @@ void usart_rx_check(void) {
     if (pos > old_pos) {                    /* Current position is over previous one */
       /* We are in "linear" mode */
       /* Process data directly by subtracting "pointers" */
-      usart_send_data(&DMA_RX_Buffer[old_pos], pos - old_pos);
+      process_uart_data(&DMA_RX_Buffer[old_pos], pos - old_pos);
     } else {
       /* We are in "overflow" mode */
       /* First process data to the end of buffer */
-      usart_send_data(&DMA_RX_Buffer[old_pos], sizeof(DMA_RX_Buffer) - old_pos);
+      process_uart_data(&DMA_RX_Buffer[old_pos], sizeof(DMA_RX_Buffer) - old_pos);
       /* Continue with beginning of buffer */
-      usart_send_data(&DMA_RX_Buffer[0], pos);
+      process_uart_data(&DMA_RX_Buffer[0], pos);
     }
   }
   old_pos = pos;                              /* Save current position as old */
@@ -192,6 +199,10 @@ void usart_rx_check(void) {
   if (old_pos == sizeof(DMA_RX_Buffer)) {
     old_pos = 0;
   }
+}
+
+void process_uart_data(uint8_t* data, size_t len) {
+  command_queue_process_data(main_command_queue, (char*) data, (uint8_t)len);
 }
 
 void usart_send_string(const char* str) {

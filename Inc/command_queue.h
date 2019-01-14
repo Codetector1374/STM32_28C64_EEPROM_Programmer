@@ -27,21 +27,23 @@ typedef struct pgmr_command {
 
 typedef struct command_queue {
     char* input_buffer;
-    uint8_t buffer_size;
-    uint8_t buffer_head;
-    uint8_t buffer_tail;
+    int16_t buffer_capacity;
+    int16_t buffer_length;
+    int16_t buffer_head;
+    int16_t buffer_tail;
 
     pgmr_command* cmd_queue;
-    uint8_t command_queue_size;
-    uint8_t command_queue_head;
-    uint8_t command_queue_tail;
+    int16_t command_queue_capacity;
+    int16_t command_queue_length;
+    int16_t command_queue_head;
+    int16_t command_queue_tail;
 } command_queue;
 
 command_queue* command_queue_create_v();
 
-command_queue* command_queue_create_ii(uint8_t buffer_size, uint8_t queue_size);
+command_queue* command_queue_create_ii(int16_t buffer_size, int16_t queue_size);
 
-void process_data(command_queue* q, char* data, uint8_t len);
+void command_queue_process_data(command_queue* q, char* data, uint8_t len);
 
 uint8_t command_avail(command_queue* q);
 pgmr_command* command_queue_peek(command_queue* q);

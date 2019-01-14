@@ -9,7 +9,7 @@ command_queue* command_queue_create_v(){
   return command_queue_create_ii(COMMAND_QUEUE_DEFAULT_BUFFER_SIZE, COMMAND_QUEUE_DEFAULT_SIZE);
 }
 
-command_queue* command_queue_create_ii(uint8_t buffer_size, uint8_t queue_size) {
+command_queue* command_queue_create_ii(int16_t buffer_size, int16_t queue_size) {
   command_queue* q = malloc(sizeof(command_queue));
   if (q == NULL) {
     return NULL;
@@ -19,7 +19,8 @@ command_queue* command_queue_create_ii(uint8_t buffer_size, uint8_t queue_size) 
     free(q);
     return NULL;
   }
-  q->buffer_size = buffer_size;
+  q->buffer_capacity = buffer_size;
+  q->buffer_length = 0;
   q->buffer_head = 0;
   q->buffer_tail = 0;
 
@@ -29,19 +30,27 @@ command_queue* command_queue_create_ii(uint8_t buffer_size, uint8_t queue_size) 
     free(q);
     return NULL;
   }
-  q->command_queue_size = queue_size;
+  q->command_queue_capacity = queue_size;
+  q->command_queue_length = 0;
   q->command_queue_head = 0;
   q->command_queue_tail = 0;
 
   return q;
 }
 
-void process_data(command_queue* q, char* data, uint8_t len) {
-  uint8_t new_tail = q->buffer_tail + len;
-  if (new_tail < q->buffer_size && new_tail < q->buffer_head) {
-    // The buffer can fit the data
-    memcpy(q->input_buffer + q->buffer_tail, data, len);
-    return;
+void command_queue_process_data(command_queue* q, char* data, uint8_t len) {
+  int16_t remain = q->buffer_capacity - q->buffer_length;
+  if (remain < len){
+    len = (uint8_t)remain; // This is designed to drop data;
   }
-  if (new_tail)
+  if (q->buffer_length == 0 || (q->buffer_tail > q->buffer_head  && q->buffer_capacity - q->buffer_tail >= len)) {
+    memcpy(q->input_buffer + q->buffer_tail, data, len);
+  } else {
+    int16_t firstBatchCopy = q->buffer_capacity - q->buffer_tail;
+    if (firstBatchCopy > 0) {
+      memcpy(q->input_buffer + q->buffer_tail, data, (uint16_t)firstBatchCopy);
+    }
+    memcpy(q->input_buffer, data + firstBatchCopy, (uint16_t)(len - firstBatchCopy));
+  }
+  q->buffer_length += len;
 }

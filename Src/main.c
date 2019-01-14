@@ -59,6 +59,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "dwt_stm32_delay.h"
+#include "command_queue.h"
+#include "command_processor.h"
 #include "rom28c64.h"
 #include "74hc595.h"
 /* USER CODE END Includes */
@@ -94,6 +96,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 //#define DMA_RX_BUFFER_SIZE 64
 extern uint8_t DMA_RX_Buffer[64];
+command_queue* main_command_queue;
 //
 //#define UART_BUFFER_SIZE 256
 //uint8_t UART_Buffer[UART_BUFFER_SIZE];
@@ -147,25 +150,17 @@ int main(void)
   sr165* inReg = sr165_create(GPIOB, GPIO_PIN_10, GPIOB, GPIO_PIN_11, GPIOB, GPIO_PIN_9);
 
   rom28c64* rom = rom28c64_create(GPIOB, GPIO_PIN_15, outReg, inReg);
+
+  main_command_queue = command_queue_create_v();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint16_t cntr = 0;
-  char* printStream = calloc(sizeof(char), 32);
   while (1)
   {
     /* USER CODE END WHILE */
-    if (cntr > 0b0001111111111111U) {
-      cntr = 0;
-      HAL_Delay(10000);
-    }
-//    rom28c64_write_address(rom, cntr, (uint8_t) cntr);
-//    HAL_Delay(10);
-    uint8_t data = rom28c64_read_address(rom, cntr);
-    sprintf(printStream, "0x%04X 0x%02X\r\n", cntr, data);
-    usart_send_string(printStream);
-    cntr++;
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
